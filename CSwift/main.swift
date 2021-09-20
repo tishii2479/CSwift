@@ -5,4 +5,4 @@
 //  Created by Tatsuya Ishii on 2021/09/20.
 //
 
-let _ = CSwiftConverter().convert(input: "AA")
+let _ = CSwiftConverter().convert(input: "42")

@@ -26,21 +26,23 @@ class CSource {
     private var source: [String] = []
     
     init() {
-        for head in sourceHead {
-            source.append(head)
-        }
+        source = sourceHead
     }
     
-    func appendLine(line: String) {
+    func appendLine(line: String?) {
+        guard let line = line else { return }
         source.append(line)
     }
     
-    func output() -> String {
-        var result: String = ""
-        
-        for line in source {
-            result.append(line + "\n")
+    func appendLines(lines: [String]?) {
+        guard let lines = lines else { return }
+        for line in lines {
+            appendLine(line: line)
         }
+    }
+    
+    func output() -> String {
+        let result: String = source.joined(separator: "\n") + "\n"
         
         return result
     }
