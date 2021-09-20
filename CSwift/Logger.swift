@@ -14,7 +14,7 @@ class Logger {
     }
     
     enum ErrorType {
-        case fatal
+        case error
         case warning
     }
     
@@ -35,13 +35,14 @@ class Logger {
         }
     }
     
-    static func error(_ val: Any..., type: ErrorType = .fatal) {
+    static func error(_ val: Any..., type: ErrorType = .error) {
         switch type {
-        case .fatal:
+        case .error:
             print("[error] ", terminator: "")
             for v in val {
                 print(v)
             }
+            fatalError()
         case .warning:
             print("[warning] ", terminator: "")
             for v in val {

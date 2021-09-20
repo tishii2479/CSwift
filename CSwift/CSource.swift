@@ -8,15 +8,11 @@
 import Foundation
 
 protocol Source {
-    
     func appendLine(line: String)
-    
     func output() -> String
-    
 }
 
 class CSource {
-    
     private let sourceHead: [String] =
         [
             "#include <bits/stdc++.h>",
@@ -46,5 +42,4 @@ class CSource {
         
         return result
     }
-    
 }

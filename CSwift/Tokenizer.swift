@@ -8,13 +8,10 @@
 import Foundation
 
 protocol Tokenizer {
-    
     func tokenize(input: String) -> [Token]?
-    
 }
 
 class SwiftTokenizer: Tokenizer {
-    
     func tokenize(input: String) -> [Token]? {
         var tokens: [Token] = []
         
@@ -34,10 +31,7 @@ class SwiftTokenizer: Tokenizer {
                 return nil
             }
         }
-        
-        Logger.debug(tokens)
-        
+
         return tokens
     }
-    
 }

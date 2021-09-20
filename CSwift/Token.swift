@@ -8,7 +8,6 @@
 import Foundation
 
 struct Token {
-    
     enum Kind {
         case num    // 0-9
         case op     // +,-,*,/
@@ -17,5 +16,4 @@ struct Token {
     let kind: Kind
     let str: String
     let val: Int64?
-    
 }

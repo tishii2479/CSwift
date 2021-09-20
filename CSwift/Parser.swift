@@ -8,13 +8,10 @@
 import Foundation
 
 protocol Parser {
-    
     func parse(tokens: [Token]) -> [String]?
-    
 }
 
 public class CSwiftParser: Parser {
-    
     func parse(tokens: [Token]) -> [String]? {
         var result: [String] = []
         var currentLine: [String] = []
@@ -34,5 +31,4 @@ public class CSwiftParser: Parser {
         
         return result
     }
-    
 }

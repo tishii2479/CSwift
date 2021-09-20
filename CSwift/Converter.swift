@@ -6,13 +6,10 @@
 //
 
 protocol Converter {
-    
     func convert(input: String) -> String?
-    
 }
 
 public class CSwiftConverter: Converter {
-    
     public init() {}
     
     public func convert(input: String) -> String? {
@@ -29,9 +26,16 @@ public class CSwiftConverter: Converter {
     }
     
     private func swiftToC(input: String) -> [String]? {
-        let tokens = SwiftTokenizer().tokenize(input: input)!
+        guard let tokens = SwiftTokenizer().tokenize(input: input) else {
+            Logger.error("Failed to tokenize input: \(input)")
+            return nil
+        }
         
-        return CSwiftParser().parse(tokens: tokens)!
+        guard let result = CSwiftParser().parse(tokens: tokens) else {
+            Logger.error("Failed to parse tokens: \(tokens)")
+            return nil
+        }
+        
+        return result
     }
-    
 }
