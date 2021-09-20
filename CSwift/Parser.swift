@@ -22,11 +22,21 @@ public class CSwiftParser: Parser {
                 currentLine.append(token.str)
             case .op:
                 currentLine.append(token.str)
+            case .variable:
+                currentLine.append(token.str)
+            case .reserved:
+                switch token.reserved {
+                case .var:
+                    currentLine.append("int")
+                default:
+                    Logger.error("Unsupported reserved token: \(token)")
+                    return nil
+                }
             }
         }
         
         if currentLine.count > 0 {
-            result.append(currentLine.joined(separator: " "))
+            result.append(currentLine.joined(separator: " ") + ";")
         }
         
         return result

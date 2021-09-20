@@ -20,8 +20,6 @@ public class CSwiftConverter: Converter {
         source.appendLines(lines: swiftToC(input: input))
         
         source.appendLine(line: "}")
-        
-        Logger.debug(source.output(), type: .code)
         return source.output()
     }
     

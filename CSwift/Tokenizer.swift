@@ -17,17 +17,40 @@ class SwiftTokenizer: Tokenizer {
         
         for s in input.split(separator: " ") {
             let s = String(s) // TODO: check performance
-            switch s[s.startIndex] {
-            case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9":
+            
+            // check reserved
+            var isReserved: Bool = false
+            for reserved in Reserved.allCases {
+                if s == reserved.rawValue {
+                    tokens.append(
+                        Token(
+                            kind: .reserved,
+                            str: reserved.rawValue,
+                            reserved: reserved
+                        )
+                    )
+                    isReserved = true
+                    break
+                }
+            }
+            if isReserved { continue }
+            
+            let first: Character = s[s.startIndex]
+            if first.isNumber {
                 guard let val = Int64(s) else {
                     Logger.error("Failed to parse to number: \(s)")
                     return nil
                 }
                 tokens.append(Token(kind: .num, str: s, val: val))
-            case "+", "-", "*", "/":
-                tokens.append(Token(kind: .op, str: s, val: nil))
-            default:
-                Logger.error("Unexpected character: \(s[s.startIndex])")
+            }
+            else if first.isLetter {
+                tokens.append(Token(kind: .variable, str: s))
+            }
+            else if first.isOperator {
+                tokens.append(Token(kind: .op, str: s))
+            }
+            else {
+                Logger.error("Unexpected character: \(s)")
                 return nil
             }
         }
