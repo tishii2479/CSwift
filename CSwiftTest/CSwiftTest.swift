@@ -12,14 +12,16 @@ class CSwiftTest: XCTestCase {
     private let testCases: [String: String] = [
         "" : "",
         "42" : "42;\n",
-        "1 + 1" : "1 + 1;\n",
+        "1+1" : "1 + 1;\n",
         "var a = 10" : "auto a = 10;\n",
         "var value = 432" : "auto value = 432;\n",
         "1 == 1" : "1 == 1;\n",
         "var a = 10 / 2" : "auto a = 10 / 2;\n",
         "var flag = true" : "auto flag = true;\n",
-        "let a = N * N" : "const auto a = N * N;\n",
-        "var num = ( 1 == 1 )" : "auto num = ( 1 == 1 );\n",
+        "let a=N*N" : "const auto a = N * N;\n",
+        "var num = (1 == 1)" : "auto num = ( 1 == 1 );\n",
+        "var value=10" : "auto value = 10;\n",
+        "var flag=n==3" : "auto flag = n == 3;\n",
     ]
     
     func testAll() throws {

@@ -18,3 +18,16 @@ extension String {
         return nil
     }
 }
+
+extension Character {
+    // TODO: remove
+    var isOperator: Bool {
+        let ops: [Character] = ["+", "-", "*", "/", "=", "(", "{", ")", "}"]
+        for op in ops {
+            if self == op {
+                return true
+            }
+        }
+        return false
+    }
+}

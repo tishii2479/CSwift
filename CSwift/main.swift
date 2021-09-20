@@ -5,13 +5,7 @@
 //  Created by Tatsuya Ishii on 2021/09/20.
 //
 
-let input: String =
-"""
-if true {
-    
-}
-
-"""
+let input: String = "var num = (1 == 1)"
 if let result = CSwiftConverter().convert(input: input) {
     Logger.debug(result, type: .code)
 }
