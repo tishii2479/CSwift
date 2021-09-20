@@ -13,6 +13,7 @@ class CSwiftTest: XCTestCase {
     private let testCases: [String: String] = [
         "" : "",
         "42" : "42\n",
+        "1 + 1" : "1 + 1\n",
     ]
     
     func testAll() throws {
