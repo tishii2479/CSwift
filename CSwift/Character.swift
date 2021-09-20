@@ -7,14 +7,13 @@
 
 import Foundation
 
-extension Character {
-    var isOperator: Bool {
-        let ops = "+-*/="
-        for op in ops {
-            if self == op {
-                return true
+extension String {
+    var isOperator: Token.Kind? {
+        for op in Token.Kind.operators {
+            if self == op.rawValue {
+                return op
             }
         }
-        return false
+        return nil
     }
 }

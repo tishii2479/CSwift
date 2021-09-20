@@ -20,18 +20,14 @@ public class CSwiftParser: Parser {
             switch token.kind {
             case .num:
                 currentLine.append(token.str)
-            case .op:
+            case .plus, .minus, .mul, .div, .equal, .assign:
                 currentLine.append(token.str)
             case .variable:
                 currentLine.append(token.str)
-            case .reserved:
-                switch token.reserved {
-                case .var:
-                    currentLine.append("int")
-                default:
-                    Logger.error("Unsupported reserved token: \(token)")
-                    return nil
-                }
+            case .var, .let:
+                currentLine.append("auto")
+            case .true, .false:
+                currentLine.append(token.str)
             }
         }
         

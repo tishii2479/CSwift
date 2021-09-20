@@ -14,17 +14,21 @@ class CSwiftTest: XCTestCase {
         "" : "",
         "42" : "42;\n",
         "1 + 1" : "1 + 1;\n",
-        "var a = 10" : "int a = 10;\n",
-        "var value = 432" : "int value = 432;\n",
+        "var a = 10" : "auto a = 10;\n",
+        "var value = 432" : "auto value = 432;\n",
+        "1 == 1" : "1 == 1;\n",
+        "var a = 10 / 2" : "auto a = 10 / 2;\n",
+        "var flag = true" : "auto flag = true;\n",
+        "let a = N * N" : "auto a = N * N;\n",
     ]
     
     func testAll() throws {
         for (input, expected) in testCases {
-            assertCSSwiftConverter(input: input, expected: outputCode(cSource: expected))
+            assertCSwiftConverter(input: input, expected: outputCode(cSource: expected))
         }
     }
     
-    private func assertCSSwiftConverter(input: String, expected: String) {
+    private func assertCSwiftConverter(input: String, expected: String) {
         guard let output = CSwiftConverter().convert(input: input) else {
             XCTFail("Failed to convert swift code: \(input)")
             return

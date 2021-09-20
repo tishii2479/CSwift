@@ -7,7 +7,7 @@
 
 let input: String = "var a = 10"
 if let result = CSwiftConverter().convert(input: input) {
-    print(result)
+    Logger.debug(result, type: .code)
 }
 else {
     Logger.error("Failed to convert input: \(input)")
