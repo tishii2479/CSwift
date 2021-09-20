@@ -19,8 +19,16 @@ class CSwiftTest: XCTestCase {
     }
 
     func testExample() throws {
-        let code: String = ""
-        XCTAssertEqual(CSwiftConverter().convert(code: code), "Hello world!")
+        let expected: String = 
+        """
+        #include <bits/stdc++.h>
+        using namespace std;
+        int main() {
+            cout << "Hello world!" << endl;
+        }
+        
+        """
+        XCTAssertEqual(CSwiftConverter().convert(input: "")!, expected)
     }
 
     func testPerformanceExample() throws {
