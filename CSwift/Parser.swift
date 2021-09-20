@@ -20,12 +20,15 @@ public class CSwiftParser: Parser {
             switch token.kind {
             case .num:
                 currentLine.append(token.str)
-            case .plus, .minus, .mul, .div, .equal, .assign:
+            case .plus, .minus, .mul, .div, .equal, .assign,
+                 .lBrace, .rBrace, .lBracket, .rBracket:
                 currentLine.append(token.str)
             case .variable:
                 currentLine.append(token.str)
-            case .var, .let:
+            case .var:
                 currentLine.append("auto")
+            case .let:
+                currentLine.append("const auto")
             case .true, .false:
                 currentLine.append(token.str)
             }

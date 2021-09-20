@@ -30,8 +30,9 @@ class Logger {
         case .none:
             print("[debug] ", terminator: "")
             for v in val {
-                print(v)
+                print(v, terminator: " ")
             }
+            print("")
         }
     }
     
@@ -40,14 +41,16 @@ class Logger {
         case .error:
             print("[error] ", terminator: "")
             for v in val {
-                print(v)
+                print(v, terminator: " ")
             }
+            print("")
             fatalError()
         case .warning:
             print("[warning] ", terminator: "")
             for v in val {
-                print(v)
+                print(v, terminator: " ")
             }
+            print("")
         }
     }
 }

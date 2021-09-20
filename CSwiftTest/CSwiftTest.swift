@@ -9,7 +9,6 @@ import XCTest
 import CSwift
 
 class CSwiftTest: XCTestCase {
-    
     private let testCases: [String: String] = [
         "" : "",
         "42" : "42;\n",
@@ -19,7 +18,8 @@ class CSwiftTest: XCTestCase {
         "1 == 1" : "1 == 1;\n",
         "var a = 10 / 2" : "auto a = 10 / 2;\n",
         "var flag = true" : "auto flag = true;\n",
-        "let a = N * N" : "auto a = N * N;\n",
+        "let a = N * N" : "const auto a = N * N;\n",
+        "var num = ( 1 == 1 )" : "auto num = ( 1 == 1 );\n",
     ]
     
     func testAll() throws {
@@ -52,5 +52,4 @@ class CSwiftTest: XCTestCase {
         
         return result
     }
-    
 }

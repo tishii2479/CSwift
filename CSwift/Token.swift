@@ -16,6 +16,10 @@ struct Token {
         case div        = "/"
         case equal      = "=="
         case assign     = "="
+        case lBrace     = "{"
+        case rBrace     = "}"
+        case lBracket   = "("
+        case rBracket   = ")"
         case `var`      // var
         case `let`      // let
         case variable   // hoge, fuga
@@ -37,7 +41,8 @@ struct Token {
                     return true
                 }
                 return false
-            case .plus, .minus, .mul, .div, .equal, .assign:
+            case .plus, .minus, .mul, .div, .equal, .assign,
+                 .lBrace, .lBracket, .rBrace, .rBracket:
                 return str == self.rawValue
             case .var:
                 return str == "var"
