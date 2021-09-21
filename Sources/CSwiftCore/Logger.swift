@@ -7,18 +7,18 @@
 
 import Foundation
 
-class Logger {
-    enum DebugType {
+public class Logger {
+    public enum DebugType {
         case none
         case code
     }
     
-    enum ErrorType {
+    public enum ErrorType {
         case error
         case warning
     }
     
-    static func debug(_ val: Any..., type: DebugType = .none) {
+    public static func debug(_ val: Any..., type: DebugType = .none) {
         switch type {
         case .code:
             print("[debug] Code output:")
@@ -36,7 +36,7 @@ class Logger {
         }
     }
     
-    static func error(_ val: Any..., type: ErrorType = .error) {
+    public static func error(_ val: Any..., type: ErrorType = .error) {
         switch type {
         case .error:
             print("[error] ", terminator: "")

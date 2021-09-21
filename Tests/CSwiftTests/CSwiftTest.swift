@@ -6,7 +6,7 @@
 //
 
 import XCTest
-import CSwift
+import CSwiftCore
 
 class CSwiftTest: XCTestCase {
     private let testCases: [String: String] = [
