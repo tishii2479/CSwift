@@ -5,8 +5,6 @@
 //  Created by Tatsuya Ishii on 2021/09/20.
 //
 
-import Foundation
-
 protocol Tokenizer {
     func tokenize(input: String) -> [Token]?
 }

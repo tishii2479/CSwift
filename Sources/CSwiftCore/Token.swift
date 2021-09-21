@@ -5,9 +5,7 @@
 //  Created by Tatsuya Ishii on 2021/09/20.
 //
 
-import Foundation
-
-struct Token {
+struct Token: Convertable {
     enum Kind: String, CaseIterable {
         case num        // 0-9
         case plus       = "+"
@@ -30,6 +28,11 @@ struct Token {
         case input      // input
         case endl       = "\n"
         case comma      = ","
+        case int
+        case lShift     = "<<"
+        case rShift     = ">>"
+        case cName      // cin, cout
+        case space      = "\" \""
         
         static let operators: [Kind] = [
             .plus, .minus, .mul, .div, .equal, .assign
@@ -38,6 +41,22 @@ struct Token {
         static let reserved: [Kind] = [
             .if, .var, .let, .true, .false, .print, .input
         ]
+        
+        static let noLeftSpace: [Kind] = [
+            .comma, .rBr, .rBrCur
+        ]
+        
+        static let noRightSpace: [Kind] = [
+            .lBr, .lBrCur
+        ]
+        
+        var isNoLeftSpace: Bool {
+            Kind.noLeftSpace.contains(self)
+        }
+        
+        var isNoRightSpace: Bool {
+            Kind.noRightSpace.contains(self)
+        }
                 
         func isConvertable(_ str: String) -> Bool {
             switch self {
@@ -46,13 +65,10 @@ struct Token {
                     return true
                 }
                 return false
-            case .plus, .minus, .mul, .div, .equal, .assign,
-                 .lBr, .rBr, .lBrCur, .rBrCur,
-                 .if, .var, .let,
-                 .true, .false, .print, .endl, .input, .comma:
-                return str == self.rawValue
             case .variable:
                 return str.first?.isLetter == true
+            default:
+                return str == self.rawValue
             }
         }
     }
@@ -66,7 +82,7 @@ struct Token {
             return "int"
         case .let:
             return "const int"
-        case .num, .variable:
+        case .num, .variable, .cName:
             return str
         default:
             return kind.rawValue
@@ -79,6 +95,7 @@ struct Token {
     }
     
     init(kind: Kind) {
+        // TODO: check is ok without raw str
         self.kind = kind
         self.str = kind.rawValue
     }

@@ -5,8 +5,6 @@
 //  Created by Tatsuya Ishii on 2021/09/20.
 //
 
-import Foundation
-
 protocol Source {
     func appendLine(line: String)
     func output() -> String

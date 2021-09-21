@@ -5,8 +5,6 @@
 //  Created by Tatsuya Ishii on 2021/09/20.
 //
 
-import Foundation
-
 protocol Parser {
     func parse(tokens: [Token]) -> [String]?
 }
@@ -14,12 +12,12 @@ protocol Parser {
 public class CSwiftParser: Parser {
     private var ptr = 0
     private var result: [String] = []
-    private var currentLine: [String] = []
+    private var current: Statement = Statement()
     private var tokens: [Token] = []
     
     private func setup() {
         result.removeAll()
-        currentLine.removeAll()
+        current = Statement()
         ptr = 0
     }
     
@@ -45,7 +43,7 @@ public class CSwiftParser: Parser {
             }
         }
         
-        if currentLine.count > 0 {
+        if current.count > 0 {
             endOfLine()
         }
         
@@ -53,24 +51,21 @@ public class CSwiftParser: Parser {
     }
     
     private func endOfLine() {
-        result.append(currentLine.joined(separator: " ") + ";")
-        currentLine.removeAll()
-    }
-    
-    private func endOfBlock() {
-        result.append(currentLine.joined(separator: " "))
-        currentLine.removeAll()
+        result.append(current.convertValue)
+        current.removeAll()
     }
 
-    private func read(kind: Token.Kind) -> Token? {
+    private func read(kind: Token.Kind) -> Token? { return read(kind: [kind]) }
+    private func read(kind: [Token.Kind]) -> Token? {
         return consume(kind: kind, append: false)
     }
     
-    private func consume(kind: Token.Kind, append: Bool = true) -> Token? {
+    private func consume(kind: Token.Kind, append: Bool = true) -> Token? { return consume(kind: [kind], append: append) }
+    private func consume(kind: [Token.Kind], append: Bool = true) -> Token? {
         guard expect(kind: kind) else { return nil }
         
         if append {
-            currentLine.append(tokens[ptr].convertValue)
+            current.append(tokens[ptr])
         }
         
         ptr += 1
@@ -80,11 +75,13 @@ public class CSwiftParser: Parser {
     ///
     /// Check next token has the expected kind
     ///
-    private func expect(kind: Token.Kind) -> Bool {
-        if ptr >= tokens.count || kind != tokens[ptr].kind {
-            return false
+    private func expect(kind: Token.Kind) -> Bool { return expect(kind: [kind]) }
+    private func expect(kind: [Token.Kind]) -> Bool {
+        if ptr >= tokens.count { return false }
+        for k in kind {
+            if k == tokens[ptr].kind { return true }
         }
-        return true
+        return false
     }
     
     ///
@@ -105,22 +102,19 @@ public class CSwiftParser: Parser {
         
         guard read(kind: .rBrCur) != nil else { return false }
         
-        currentLine.append("int")
+        current.append(Token(kind: .var))
         for (i, variable) in variables.enumerated() {
-            if i != variables.count - 1 {
-                currentLine.append("\(variable.str),")
-            }
-            else {
-                currentLine.append("\(variable.str)")
-            }
+            current.append(variable)
+            current.append(.comma)
         }
-        
+        current.removeLast()
         endOfLine()
         
-        currentLine.append("cin")
+        current.append(Token(kind: .cName, str: "cin"))
         
         for variable in variables {
-            currentLine.append(">> \(variable.str)")
+            current.append(.rShift)
+            current.append(variable)
         }
         
         return true
@@ -145,14 +139,17 @@ public class CSwiftParser: Parser {
 
         guard read(kind: .rBrCur) != nil else { return false }
         
-        currentLine.append("cout")
+        current.append(Token(kind: .cName, str: "cout"))
         for (i, variable) in variables.enumerated() {
-            currentLine.append("<< \(variable.str)")
+            current.append(.lShift)
+            current.append(variable)
             if i < variables.count - 1 {
-                currentLine.append("<< \" \"")
+                current.append(.lShift)
+                current.append(.space)
             }
         }
-        currentLine.append("<< endl")
+        current.append(.lShift)
+        current.append(Token(kind: .cName, str: "endl"))
         
         return true
     }
@@ -161,34 +158,28 @@ public class CSwiftParser: Parser {
     /// Parse `if expr {}` to `if (expr) {}`
     ///
     private func parseIf() -> Bool {
-        guard read(kind: .if) != nil,
-              let expr = expr(),
-              let block = block()
-        else { return false }
+        guard consume(kind: .if) != nil else { return false }
         
-        currentLine.append("if (\(expr.convertValue)) \(block.convertValue)")
-        endOfBlock()
+        current.append(.lBrCur)
+        guard expr() else { return false }
+        current.append(.rBrCur)
+        
+        guard block() else { return false }
         return true
     }
     
-    private func expr() -> Expr? {
-        var expr = Expr()
-        guard let tok = read(kind: .true) else { return nil }
-        expr.appendToken(tok)
-        return expr
+    private func expr() -> Bool {
+        guard let tok = consume(kind: [.num, .true, .false, .variable]) else { return false }
+        return true
     }
     
-    private func block() -> Block? {
-        var block = Block()
-        guard read(kind: .lBr) != nil else { return nil }
+    private func block() -> Bool {
+        guard consume(kind: .lBr) != nil else { return false }
         while read(kind: .endl) != nil { read(kind: .endl) }
-        guard read(kind: .rBr) != nil else { return nil }
+        current.append(.endl)
+        guard consume(kind: .rBr) != nil else { return false }
         while read(kind: .endl) != nil { read(kind: .endl) }
-        
-        block.appendToken(Token(kind: .lBr))
-        block.appendToken(Token(kind: .endl))
-        block.appendToken(Token(kind: .rBr))
-        return block
+        return true
     }
     
     private func parseError() -> Never {
