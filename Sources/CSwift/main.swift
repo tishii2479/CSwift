@@ -7,7 +7,7 @@
 
 import CSwiftCore
 
-let input: String = "if true { }"
+let input: String = "print(n)"
 if let result = CSwiftConverter().convert(input: input) {
     Logger.debug(result, type: .code)
 }

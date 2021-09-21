@@ -12,27 +12,54 @@ protocol Parser {
 }
 
 public class CSwiftParser: Parser {
+    private var ptr = 0
+    private var result: [String] = []
+    private var currentLine: [String] = []
+    private var tokens: [Token] = []
+    
+    private func setup() {
+        result.removeAll()
+        currentLine.removeAll()
+        ptr = 0
+    }
+    
     func parse(tokens: [Token]) -> [String]? {
-        var result: [String] = []
-        var currentLine: [String] = []
-        
-        for token in tokens {
+        setup()
+        self.tokens = tokens
+
+        while ptr < tokens.count {
+            let token = tokens[ptr]
+
             switch token.kind {
-            case .num:
-                currentLine.append(token.str)
-            case .plus, .minus, .mul, .div, .equal, .assign,
-                 .lBrace, .rBrace, .lBracket, .rBracket:
-                currentLine.append(token.str)
-            case .variable:
-                currentLine.append(token.str)
-            case .var:
-                currentLine.append("auto")
-            case .let:
-                currentLine.append("const auto")
-            case .true, .false:
-                currentLine.append(token.str)
             case .if:
-                currentLine.append(token.str)
+                guard read(kind: .if) != nil,
+                      let expr = read(kind: .true),
+                      read(kind: .lBr) != nil,
+                      // read block
+                      read(kind: .rBr) != nil
+                else {
+                    Logger.error("Failed to parse: \(token)")
+                    return nil
+                }
+
+                currentLine.append("if (\(expr.str)) {}")
+            case .print:
+                guard read(kind: .print) != nil,
+                      read(kind: .lBrCur) != nil,
+                      let variable = read(kind: .variable),
+                      read(kind: .rBrCur) != nil
+                else {
+                    Logger.error("Failed to parse: \(token)")
+                    return nil
+                }
+
+                currentLine.append("cout << \(variable.str) << endl")
+            default:
+                guard consume(kind: token.kind) != nil
+                else {
+                    Logger.error("Failed to parse: \(token)")
+                    return nil
+                }
             }
         }
         
@@ -41,5 +68,28 @@ public class CSwiftParser: Parser {
         }
         
         return result
+    }
+    
+    private func read(kind: Token.Kind) -> Token? {
+        return consume(kind: kind, append: false)
+    }
+    
+    private func consume(kind: Token.Kind, append: Bool = true) -> Token? {
+        guard expect(kind: kind) else { return nil }
+        
+        if append {
+            currentLine.append(tokens[ptr].convertValue)
+        }
+        
+        ptr += 1
+        return tokens[ptr - 1]
+    }
+    
+    private func expect(kind: Token.Kind) -> Bool {
+        if ptr >= tokens.count || kind != tokens[ptr].kind {
+            return false
+        }
+        
+        return true
     }
 }

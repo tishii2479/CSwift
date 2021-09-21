@@ -22,6 +22,7 @@ class CSwiftTest: XCTestCase {
         "var num = (1 == 1)" : "auto num = ( 1 == 1 );\n",
         "var value=10" : "auto value = 10;\n",
         "var flag=n==3" : "auto flag = n == 3;\n",
+        "print(n)" : "cout << n << endl;\n",
     ]
     
     func testAll() throws {
