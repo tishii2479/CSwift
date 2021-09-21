@@ -50,16 +50,14 @@ class SwiftTokenizer: Tokenizer {
     private func format(input: String) -> String {
         var result: String = ""
         
-        for i in 0 ..< input.count {
+        guard input.count > 0 else { return "" }
+
+        for i in 0 ..< input.count - 1 {
             let idx = input.index(input.startIndex, offsetBy: i)
-            if i == input.count - 1 {
-                result.append(input[idx])
-                continue
-            }
             
             // if adjacent letters is a pair of operator and letter,
             // insert a space.
-            if (input[idx].isOperator != input[input.index(after: idx)].isOperator) {
+            if (input[idx].isSymbol != input[input.index(after: idx)].isSymbol) {
                 result.append(input[idx])
                 result.append(" ")
             }
@@ -67,6 +65,9 @@ class SwiftTokenizer: Tokenizer {
                 result.append(input[idx])
             }
         }
+        
+        let idx = input.index(input.startIndex, offsetBy: input.count - 1)
+        result.append(input[idx])
         
         return result
     }

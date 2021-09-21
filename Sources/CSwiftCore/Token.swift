@@ -20,6 +20,7 @@ struct Token {
         case rBrace     = "}"
         case lBracket   = "("
         case rBracket   = ")"
+        case `if`       = "if"
         case `var`      // var
         case `let`      // let
         case variable   // hoge, fuga
@@ -31,7 +32,7 @@ struct Token {
         ]
         
         static let reserved: [Kind] = [
-            .var, .let, .true, .false
+            .if, .var, .let, .true, .false
         ]
                 
         func isConvertable(_ str: String) -> Bool {
@@ -42,18 +43,12 @@ struct Token {
                 }
                 return false
             case .plus, .minus, .mul, .div, .equal, .assign,
-                 .lBrace, .lBracket, .rBrace, .rBracket:
+                 .lBrace, .lBracket, .rBrace, .rBracket,
+                 .if, .var, .let,
+                 .true, .false:
                 return str == self.rawValue
-            case .var:
-                return str == "var"
-            case .let:
-                return str == "let"
             case .variable:
                 return str.first?.isLetter == true
-            case .true:
-                return str == "true"
-            case .false:
-                return str == "false"
             }
         }
     }

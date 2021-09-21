@@ -31,6 +31,8 @@ public class CSwiftParser: Parser {
                 currentLine.append("const auto")
             case .true, .false:
                 currentLine.append(token.str)
+            case .if:
+                currentLine.append(token.str)
             }
         }
         

@@ -21,8 +21,8 @@ extension String {
 
 extension Character {
     // TODO: remove
-    var isOperator: Bool {
-        let ops: [Character] = ["+", "-", "*", "/", "=", "(", "{", ")", "}"]
+    var isSymbol: Bool {
+        let ops: [Character] = ["+", "-", "*", "/", "=", "(", "{", ")", "}", ","]
         for op in ops {
             if self == op {
                 return true
