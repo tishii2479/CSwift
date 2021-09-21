@@ -18,12 +18,12 @@ struct Main: ParsableCommand {
 
     mutating func run() throws {
         guard let inputFile = inputFile else {
-            Logger.error("Input file '\(inputFile)' does not exist")
+            Logger.error("Input file '\(self.inputFile)' does not exist")
             return
         }
         
         let inputURL = URL(fileURLWithPath: inputFile)
-        let outputURL = URL(fileURLWithPath: outputFile ?? "main.cpp")
+        let outputURL = URL(fileURLWithPath: outputFile ?? "out.cpp")
 
         do {
             let input = try String(contentsOf: inputURL)

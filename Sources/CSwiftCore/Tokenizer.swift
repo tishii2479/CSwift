@@ -15,35 +15,38 @@ class SwiftTokenizer: Tokenizer {
     func tokenize(input: String) -> [Token]? {
         var tokens: [Token] = []
     
-        for s in format(input: input).split(whereSeparator: \.isWhitespace) {
-            let s = String(s) // TODO: check performance
-            
-            var isTokenized: Bool = false
-            
-            // check reserved tokens
-            for reserved in Token.Kind.reserved {
-                if reserved.isConvertable(s) {
-                    tokens.append(Token(kind: reserved, str: reserved.rawValue))
-                    isTokenized = true
-                    break
+        for line in input.split(whereSeparator: \.isNewline) {
+            let line = String(line) // TODO: check performance
+            for s in format(input: line).split(whereSeparator: \.isWhitespace) {
+                let s = String(s) // TODO: check performance
+                
+                var isTokenized: Bool = false
+                
+                // check reserved tokens
+                for reserved in Token.Kind.reserved {
+                    if reserved.isConvertable(s) {
+                        tokens.append(Token(kind: reserved, str: reserved.rawValue))
+                        isTokenized = true
+                        break
+                    }
                 }
-            }
-            if isTokenized { continue }
-            
-            for kind in Token.Kind.allCases {
-                if Token.Kind.reserved.contains(kind) { continue }
-                if kind.isConvertable(s) {
-                    tokens.append(Token(kind: kind, str: s))
-                    isTokenized = true
-                    break
+                if isTokenized { continue }
+                
+                for kind in Token.Kind.allCases {
+                    if Token.Kind.reserved.contains(kind) { continue }
+                    if kind.isConvertable(s) {
+                        tokens.append(Token(kind: kind, str: s))
+                        isTokenized = true
+                        break
+                    }
                 }
+                
+                if isTokenized { continue }
+                
+                Logger.error("Failed to tokenize: '\(input)' at '\(s)'")
             }
-            
-            if isTokenized { continue }
-            
-            Logger.error("Failed to tokenize: '\(s)'")
+            tokens.append(Token(kind: .endl, str: "\n"))
         }
-
         return tokens
     }
     

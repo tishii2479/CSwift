@@ -26,7 +26,8 @@ struct Token {
         case variable   // hoge, fuga
         case `true`     // true
         case `false`    // false
-        case `print`
+        case `print`    // print
+        case `endl`     = "\n"
         
         static let operators: [Kind] = [
             .plus, .minus, .mul, .div, .equal, .assign
@@ -46,7 +47,7 @@ struct Token {
             case .plus, .minus, .mul, .div, .equal, .assign,
                  .lBr, .rBr, .lBrCur, .rBrCur,
                  .if, .var, .let,
-                 .true, .false, .print:
+                 .true, .false, .print, .endl:
                 return str == self.rawValue
             case .variable:
                 return str.first?.isLetter == true

@@ -54,6 +54,14 @@ public class CSwiftParser: Parser {
                 }
 
                 currentLine.append("cout << \(variable.str) << endl")
+            case .endl:
+                guard read(kind: .endl) != nil
+                else {
+                    Logger.error("Failed to parse: \(token)")
+                    return nil
+                }
+                endOfLine()
+                currentLine.removeAll()
             default:
                 guard consume(kind: token.kind) != nil
                 else {
@@ -64,10 +72,14 @@ public class CSwiftParser: Parser {
         }
         
         if currentLine.count > 0 {
-            result.append(currentLine.joined(separator: " ") + ";")
+            endOfLine()
         }
         
         return result
+    }
+    
+    private func endOfLine() {
+        result.append(currentLine.joined(separator: " ") + ";")
     }
     
     private func read(kind: Token.Kind) -> Token? {
