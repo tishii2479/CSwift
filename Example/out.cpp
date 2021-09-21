@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 int main() {
-auto a = 10;
-cout << a << endl;
+int a;
+cin >> a;
+const int b = a - 1;
+cout << b << endl;
 }

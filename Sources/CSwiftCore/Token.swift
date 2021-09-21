@@ -26,15 +26,17 @@ struct Token {
         case variable   // hoge, fuga
         case `true`     // true
         case `false`    // false
-        case `print`    // print
-        case `endl`     = "\n"
+        case print      // print
+        case input      // input
+        case endl       = "\n"
+        case comma      = ","
         
         static let operators: [Kind] = [
             .plus, .minus, .mul, .div, .equal, .assign
         ]
         
         static let reserved: [Kind] = [
-            .if, .var, .let, .true, .false, .print
+            .if, .var, .let, .true, .false, .print, .input
         ]
                 
         func isConvertable(_ str: String) -> Bool {
@@ -47,7 +49,7 @@ struct Token {
             case .plus, .minus, .mul, .div, .equal, .assign,
                  .lBr, .rBr, .lBrCur, .rBrCur,
                  .if, .var, .let,
-                 .true, .false, .print, .endl:
+                 .true, .false, .print, .endl, .input, .comma:
                 return str == self.rawValue
             case .variable:
                 return str.first?.isLetter == true
@@ -61,9 +63,9 @@ struct Token {
     var convertValue: String {
         switch self.kind {
         case .var:
-            return "auto"
+            return "int"
         case .let:
-            return "const auto"
+            return "const int"
         case .num, .variable:
             return str
         default:

@@ -1,2 +1,3 @@
-var a = 10
-print(a)
+input(a)
+let b = a - 1
+print(b)

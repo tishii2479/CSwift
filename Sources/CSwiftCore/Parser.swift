@@ -44,16 +44,82 @@ public class CSwiftParser: Parser {
 
                 currentLine.append("if (\(expr.str)) {}")
             case .print:
+                var variables: [Token] = []
                 guard read(kind: .print) != nil,
                       read(kind: .lBrCur) != nil,
-                      let variable = read(kind: .variable),
-                      read(kind: .rBrCur) != nil
+                      let var1 = read(kind: .variable)
                 else {
                     Logger.error("Failed to parse: \(token)")
                     return nil
                 }
+                
+                variables.append(var1)
 
-                currentLine.append("cout << \(variable.str) << endl")
+                while read(kind: .comma) != nil {
+                    guard let variable = read(kind: .variable) else {
+                        Logger.error("Failed to parse: \(token)")
+                        return nil
+                    }
+                    variables.append(variable)
+                }
+
+                guard read(kind: .rBrCur) != nil else {
+                    Logger.error("Failed to parse: \(token)")
+                    return nil
+                }
+                
+                currentLine.append("cout")
+                for (i, variable) in variables.enumerated() {
+                    if i != variables.count - 1 {
+                        currentLine.append("<< \(variable.str) << \" \"")
+                    }
+                    else {
+                        currentLine.append("<< \(variable.str)")
+                    }
+                }
+                currentLine.append("<< endl")
+
+            case .input:
+                var variables: [Token] = []
+                guard read(kind: .input) != nil,
+                      read(kind: .lBrCur) != nil,
+                      let var1 = read(kind: .variable)
+                else {
+                    Logger.error("Failed to parse: \(token)")
+                    return nil
+                }
+                
+                variables.append(var1)
+                while read(kind: .comma) != nil {
+                    guard let variable = read(kind: .variable) else {
+                        Logger.error("Failed to parse: \(token)")
+                        return nil
+                    }
+                    variables.append(variable)
+                }
+                
+                guard read(kind: .rBrCur) != nil else {
+                    Logger.error("Failed to parse: \(token)")
+                    return nil
+                }
+                
+                currentLine.append("int")
+                for (i, variable) in variables.enumerated() {
+                    if i != variables.count - 1 {
+                        currentLine.append("\(variable.str),")
+                    }
+                    else {
+                        currentLine.append("\(variable.str)")
+                    }
+                }
+                
+                endOfLine()
+                
+                currentLine.append("cin")
+                
+                for variable in variables {
+                    currentLine.append(">> \(variable.str)")
+                }
             case .endl:
                 guard read(kind: .endl) != nil
                 else {
@@ -61,7 +127,6 @@ public class CSwiftParser: Parser {
                     return nil
                 }
                 endOfLine()
-                currentLine.removeAll()
             default:
                 guard consume(kind: token.kind) != nil
                 else {
@@ -80,6 +145,7 @@ public class CSwiftParser: Parser {
     
     private func endOfLine() {
         result.append(currentLine.joined(separator: " ") + ";")
+        currentLine.removeAll()
     }
     
     private func read(kind: Token.Kind) -> Token? {
