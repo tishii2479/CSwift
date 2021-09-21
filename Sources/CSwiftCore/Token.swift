@@ -73,11 +73,13 @@ struct Token {
         }
     }
     
-    init(
-        kind: Kind,
-        str: String
-    ) {
+    init(kind: Kind, str: String) {
         self.kind = kind
         self.str = str
+    }
+    
+    init(kind: Kind) {
+        self.kind = kind
+        self.str = kind.rawValue
     }
 }

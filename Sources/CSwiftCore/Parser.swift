@@ -32,107 +32,16 @@ public class CSwiftParser: Parser {
 
             switch token.kind {
             case .if:
-                guard read(kind: .if) != nil,
-                      let expr = read(kind: .true),
-                      read(kind: .lBr) != nil,
-                      // read block
-                      read(kind: .rBr) != nil
-                else {
-                    Logger.error("Failed to parse: \(token)")
-                    return nil
-                }
-
-                currentLine.append("if (\(expr.str)) {}")
-            case .print:
-                var variables: [Token] = []
-                guard read(kind: .print) != nil,
-                      read(kind: .lBrCur) != nil,
-                      let var1 = read(kind: .variable)
-                else {
-                    Logger.error("Failed to parse: \(token)")
-                    return nil
-                }
-                
-                variables.append(var1)
-
-                while read(kind: .comma) != nil {
-                    guard let variable = read(kind: .variable) else {
-                        Logger.error("Failed to parse: \(token)")
-                        return nil
-                    }
-                    variables.append(variable)
-                }
-
-                guard read(kind: .rBrCur) != nil else {
-                    Logger.error("Failed to parse: \(token)")
-                    return nil
-                }
-                
-                currentLine.append("cout")
-                for (i, variable) in variables.enumerated() {
-                    if i != variables.count - 1 {
-                        currentLine.append("<< \(variable.str) << \" \"")
-                    }
-                    else {
-                        currentLine.append("<< \(variable.str)")
-                    }
-                }
-                currentLine.append("<< endl")
-
-            case .input:
-                var variables: [Token] = []
-                guard read(kind: .input) != nil,
-                      read(kind: .lBrCur) != nil,
-                      let var1 = read(kind: .variable)
-                else {
-                    Logger.error("Failed to parse: \(token)")
-                    return nil
-                }
-                
-                variables.append(var1)
-                while read(kind: .comma) != nil {
-                    guard let variable = read(kind: .variable) else {
-                        Logger.error("Failed to parse: \(token)")
-                        return nil
-                    }
-                    variables.append(variable)
-                }
-                
-                guard read(kind: .rBrCur) != nil else {
-                    Logger.error("Failed to parse: \(token)")
-                    return nil
-                }
-                
-                currentLine.append("int")
-                for (i, variable) in variables.enumerated() {
-                    if i != variables.count - 1 {
-                        currentLine.append("\(variable.str),")
-                    }
-                    else {
-                        currentLine.append("\(variable.str)")
-                    }
-                }
-                
-                endOfLine()
-                
-                currentLine.append("cin")
-                
-                for variable in variables {
-                    currentLine.append(">> \(variable.str)")
-                }
+                guard parseIf() else { parseError() }
             case .endl:
-                guard read(kind: .endl) != nil
-                else {
-                    Logger.error("Failed to parse: \(token)")
-                    return nil
-                }
+                guard read(kind: .endl) != nil else { parseError() }
                 endOfLine()
+            case .input:
+                guard parseInput() else { parseError() }
+            case .print:
+                guard parsePrint() else { parseError() }
             default:
-                guard consume(kind: token.kind) != nil
-                else {
-                    Logger.error("Failed to parse: \(token)")
-                    return nil
-                }
+                guard consume(kind: token.kind) != nil else { parseError() }
             }
         }
         
@@ -148,6 +57,11 @@ public class CSwiftParser: Parser {
         currentLine.removeAll()
     }
     
+    private func endOfBlock() {
+        result.append(currentLine.joined(separator: " "))
+        currentLine.removeAll()
+    }
+
     private func read(kind: Token.Kind) -> Token? {
         return consume(kind: kind, append: false)
     }
@@ -162,12 +76,122 @@ public class CSwiftParser: Parser {
         ptr += 1
         return tokens[ptr - 1]
     }
-    
+
+    ///
+    /// Check next token has the expected kind
+    ///
     private func expect(kind: Token.Kind) -> Bool {
         if ptr >= tokens.count || kind != tokens[ptr].kind {
             return false
         }
+        return true
+    }
+    
+    ///
+    /// Parse `input(variable...)` to `cin >> var1 >> var2;`
+    ///
+    private func parseInput() -> Bool {
+        var variables: [Token] = []
+        guard read(kind: .input) != nil,
+              read(kind: .lBrCur) != nil,
+              let var1 = read(kind: .variable)
+        else { return false }
+        
+        variables.append(var1)
+        while read(kind: .comma) != nil {
+            guard let variable = read(kind: .variable) else { return false }
+            variables.append(variable)
+        }
+        
+        guard read(kind: .rBrCur) != nil else { return false }
+        
+        currentLine.append("int")
+        for (i, variable) in variables.enumerated() {
+            if i != variables.count - 1 {
+                currentLine.append("\(variable.str),")
+            }
+            else {
+                currentLine.append("\(variable.str)")
+            }
+        }
+        
+        endOfLine()
+        
+        currentLine.append("cin")
+        
+        for variable in variables {
+            currentLine.append(">> \(variable.str)")
+        }
         
         return true
+    }
+    
+    ///
+    /// Parse `print(variable...)` to `cout << var1 << " " << var2 << endl;`
+    ///
+    private func parsePrint() -> Bool {
+        var variables: [Token] = []
+        guard read(kind: .print) != nil,
+              read(kind: .lBrCur) != nil,
+              let var1 = read(kind: .variable)
+        else { return false }
+        
+        variables.append(var1)
+
+        while read(kind: .comma) != nil {
+            guard let variable = read(kind: .variable) else { return false }
+            variables.append(variable)
+        }
+
+        guard read(kind: .rBrCur) != nil else { return false }
+        
+        currentLine.append("cout")
+        for (i, variable) in variables.enumerated() {
+            currentLine.append("<< \(variable.str)")
+            if i < variables.count - 1 {
+                currentLine.append("<< \" \"")
+            }
+        }
+        currentLine.append("<< endl")
+        
+        return true
+    }
+    
+    ///
+    /// Parse `if expr {}` to `if (expr) {}`
+    ///
+    private func parseIf() -> Bool {
+        guard read(kind: .if) != nil,
+              let expr = expr(),
+              let block = block()
+        else { return false }
+        
+        currentLine.append("if (\(expr.convertValue)) \(block.convertValue)")
+        endOfBlock()
+        return true
+    }
+    
+    private func expr() -> Expr? {
+        var expr = Expr()
+        guard let tok = read(kind: .true) else { return nil }
+        expr.appendToken(tok)
+        return expr
+    }
+    
+    private func block() -> Block? {
+        var block = Block()
+        guard read(kind: .lBr) != nil else { return nil }
+        while read(kind: .endl) != nil { read(kind: .endl) }
+        guard read(kind: .rBr) != nil else { return nil }
+        while read(kind: .endl) != nil { read(kind: .endl) }
+        
+        block.appendToken(Token(kind: .lBr))
+        block.appendToken(Token(kind: .endl))
+        block.appendToken(Token(kind: .rBr))
+        return block
+    }
+    
+    private func parseError() -> Never {
+        Logger.error("Failed to parse tokens \(tokens), token: \(tokens[ptr]), at: \(ptr)")
     }
 }

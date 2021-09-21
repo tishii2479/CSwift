@@ -1,5 +1,5 @@
 //
-//  CSwiftTest.swift
+//  CSwiftCoreTest.swift
 //  CSwiftTest
 //
 //  Created by Tatsuya Ishii on 2021/09/20.
@@ -8,7 +8,7 @@
 import XCTest
 import CSwiftCore
 
-class CSwiftTest: XCTestCase {
+class CSwiftCoreTest: XCTestCase {
     private let testCases: [String: String] = [
         "" : "",
         "42" : "42;\n",
@@ -26,6 +26,8 @@ class CSwiftTest: XCTestCase {
         "var a = 10\nprint(a)\n" : "int a = 10;\ncout << a << endl;\n",
         "input(n)\nprint(n)\n" : "int n;\ncin >> n;\ncout << n << endl;\n",
         "input(n, k)\nprint(n, k)\n" : "int n, k;\ncin >> n >> k;\ncout << n << \" \" << k << endl;\n",
+        "if true {\n}\n" : "if (true) {\n}\n",
+        "if true { }\n" : "if (true) {\n}\n",
     ]
     
     func testAll() throws {
@@ -35,14 +37,12 @@ class CSwiftTest: XCTestCase {
     }
     
     private func assertCSwiftConverter(input: String, expected: String) {
-        Logger.debug("input", input)
         guard let output = CSwiftConverter().convert(input: input) else {
             XCTFail("Failed to convert swift code: \(input)")
             return
         }
         
-        XCTAssertEqual(output, expected)
-        Logger.debug(output, type: .code)
+        XCTAssertEqual(output, expected, "\ninput: \n\(input)")
     }
 
     private func outputCode(cSource: String) -> String {

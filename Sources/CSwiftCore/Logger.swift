@@ -13,11 +13,6 @@ public class Logger {
         case code
     }
     
-    public enum ErrorType {
-        case error
-        case warning
-    }
-    
     public static func debug(_ val: Any..., type: DebugType = .none) {
         switch type {
         case .code:
@@ -36,21 +31,13 @@ public class Logger {
         }
     }
     
-    public static func error(_ val: Any..., type: ErrorType = .error) {
-        switch type {
-        case .error:
-            print("[error] ", terminator: "")
-            for v in val {
-                print(v, terminator: " ")
-            }
-            print("")
-            fatalError()
-        case .warning:
-            print("[warning] ", terminator: "")
-            for v in val {
-                print(v, terminator: " ")
-            }
-            print("")
+    public static func error(_ val: Any...) -> Never {
+        print("[error] ", terminator: "")
+        for v in val {
+            print(v, terminator: " ")
         }
+        print("")
+        
+        fatalError()
     }
 }

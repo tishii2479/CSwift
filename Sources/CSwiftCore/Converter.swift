@@ -17,20 +17,18 @@ public class CSwiftConverter: Converter {
         source.appendLine(line: "int main() {")
         
         // Convert swift code to cpp
-        source.appendLines(lines: swiftToC(input: input))
+        source.appendLines(lines: convertCode(input: input))
         
         source.appendLine(line: "}")
         return source.output()
     }
     
-    private func swiftToC(input: String) -> [String]? {
+    private func convertCode(input: String) -> [String]? {
         guard let tokens = SwiftTokenizer().tokenize(input: input) else {
             Logger.error("Failed to tokenize input: \(input)")
-            return nil
         }
         guard let result = CSwiftParser().parse(tokens: tokens) else {
             Logger.error("Failed to parse tokens: \(tokens)")
-            return nil
         }
         
         return result

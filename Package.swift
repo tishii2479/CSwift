@@ -23,7 +23,8 @@ let package = Package(
             name: "CSwiftCore",
             dependencies: []),
         .testTarget(
-            name: "CSwiftTests",
-            dependencies: ["CSwiftCore"]),
+            name: "CSwiftCoreTests",
+            dependencies: ["CSwiftCore"],
+            path: "CSwiftCoreTests"),
     ]
 )
