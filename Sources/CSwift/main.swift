@@ -6,11 +6,40 @@
 //
 
 import CSwiftCore
+import ArgumentParser
+import Foundation
 
-let input: String = "print(n)"
-if let result = CSwiftConverter().convert(input: input) {
-    Logger.debug(result, type: .code)
+struct Main: ParsableCommand {
+    @Argument(help: "Swift file name to convert.")
+    var inputFile: String?
+    
+    @Option(name: [.customLong("output"), .customShort("o")], help: "Cpp file name to output result.")
+    var outputFile: String?
+
+    mutating func run() throws {
+        guard let inputFile = inputFile else {
+            Logger.error("Input file '\(inputFile)' does not exist")
+            return
+        }
+        
+        let inputURL = URL(fileURLWithPath: inputFile)
+        let outputURL = URL(fileURLWithPath: outputFile ?? "main.cpp")
+
+        do {
+            let input = try String(contentsOf: inputURL)
+            if let result = CSwiftConverter().convert(input: input) {
+                Logger.debug(result, type: .code)
+                try result.write(to: outputURL, atomically: true, encoding: .utf8)
+                Logger.debug("Finished writing to file: \(outputURL)")
+            }
+            else {
+                Logger.error("Failed to convert input: \(input)")
+            }
+        }
+        catch {
+            Logger.error("Failed to convert in some reason")
+        }
+    }
 }
-else {
-    Logger.error("Failed to convert input: \(input)")
-}
+
+Main.main()
