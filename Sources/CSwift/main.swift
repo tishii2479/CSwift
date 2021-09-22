@@ -19,7 +19,6 @@ struct Main: ParsableCommand {
     mutating func run() throws {
         guard let inputFile = inputFile else {
             Logger.error("Input file '\(String(describing: self.inputFile))' does not exist")
-            return
         }
         
         let inputURL = URL(fileURLWithPath: inputFile)

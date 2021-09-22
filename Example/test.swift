@@ -1,3 +1,7 @@
-input(a)
-let b = a - 1
-print(b)
+input(a, b)
+if a < b {
+    print(a)
+} 
+if b > a {
+    print(b)
+}

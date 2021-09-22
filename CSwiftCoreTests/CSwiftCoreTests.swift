@@ -30,6 +30,9 @@ class CSwiftCoreTest: XCTestCase {
         "if true { }\n" : "if (true) {\n}\n",
         "if true { }\nvar a = 10\n" : "if (true) {\n}\nint a = 10;\n",
         "if true {\nvar a = 10\n}\n" : "if (true) {\nint a = 10;\n}\n",
+        "if i < n {\n}\n" : "if (i < n) {\n}\n",
+        "if i < n \n{\n}\n" : "if (i < n) {\n}\n",
+        "i <= n" : "i <= n;\n",
     ]
     
     func testAll() throws {

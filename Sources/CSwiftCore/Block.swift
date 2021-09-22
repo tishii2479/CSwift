@@ -6,7 +6,15 @@
 //
 
 class Block: Convertable {
+    ///
+    /// Previous statment of blocks
+    /// e.g `if 1 == 1`, `while i < 10`
+    ///
     var prevStatement: Statement?
+    
+    ///
+    /// Statements in the block
+    ///
     private var statements: [Statement] = []
     
     var convertValue: String {
@@ -15,8 +23,7 @@ class Block: Convertable {
             result += statement.convertValue
         }
         
-        // remove last semicolon
-        result.popLast()
+        result.popLast() // remove last semicolon of prevStatement
         result += " {\n"
     
         for statement in statements {

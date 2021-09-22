@@ -64,12 +64,14 @@ public class CSwiftParser: Parser {
         result.append(statement.convertValue)
         statement.removeAll()
     }
-
+    
+    @discardableResult
     private func read(kind: Token.Kind) -> Token? { return read(kind: [kind]) }
     private func read(kind: [Token.Kind]) -> Token? {
         return consume(kind: kind, append: false)
     }
     
+    @discardableResult
     private func consume(kind: Token.Kind, append: Bool = true) -> Token? { return consume(kind: [kind], append: append) }
     private func consume(kind: [Token.Kind], append: Bool = true) -> Token? {
         guard expect(kind: kind) else { return nil }
@@ -113,7 +115,7 @@ public class CSwiftParser: Parser {
         guard read(kind: .rBrCur) != nil else { parseError() }
         
         statement.append(Token(kind: .var))
-        for (i, variable) in variables.enumerated() {
+        for variable in variables {
             statement.append(variable)
             statement.append(.comma)
         }
@@ -180,11 +182,15 @@ public class CSwiftParser: Parser {
     }
     
     private func parseExpr() -> Bool {
-        guard let tok = consume(kind: [.num, .true, .false, .variable]) else { parseError() }
+        guard consume(kind: [.num, .true, .false, .variable]) != nil else { parseError() }
+        while consume(kind: Token.Kind.operators) != nil {
+            guard consume(kind: [.num, .true, .false, .variable]) != nil else { parseError() }
+        }
         return true
     }
     
     private func parseBlock() -> Bool {
+        while read(kind: .endl) != nil { read(kind: .endl) }
         guard read(kind: .lBr) != nil else { parseError() }
         while read(kind: .endl) != nil { read(kind: .endl) }
         
@@ -198,7 +204,8 @@ public class CSwiftParser: Parser {
             block.appendStatement(statement)
             statement.removeAll()
         }
-
+        
+        while read(kind: .endl) != nil { read(kind: .endl) }
         guard read(kind: .rBr) != nil else { parseError() }
         while read(kind: .endl) != nil { read(kind: .endl) }
         

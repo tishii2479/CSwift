@@ -52,13 +52,24 @@ class SwiftTokenizer: Tokenizer {
         var result: String = ""
         
         guard input.count > 0 else { return "" }
-
-        for i in 0 ..< input.count - 1 {
+        
+        var i: Int = 0
+        while i < input.count - 1 {
             let idx = input.index(input.startIndex, offsetBy: i)
+            i += 1
+            
+            // check for two letter operators
+            // e.g <=, &&, |=
+            var s: String = String(input[idx]) + String(input[input.index(after: idx)])
+            if Token.Kind.isTwoLetterOperators(str: s) {
+                result.append(s)
+                i += 1
+                continue
+            }
             
             // if adjacent letters is a pair of operator and letter,
             // insert a space.
-            if (input[idx].isSymbol != input[input.index(after: idx)].isSymbol) {
+            if input[idx].isSymbol != input[input.index(after: idx)].isSymbol {
                 result.append(input[idx])
                 result.append(" ")
             }

@@ -33,9 +33,18 @@ struct Token: Convertable {
         case rShift     = ">>"
         case cName      // cin, cout
         case space      = "\" \""
+        case less       = "<"
+        case more       = ">"
+        case lessEqual  = "<="
+        case moreEqual  = ">="
         
         static let operators: [Kind] = [
-            .plus, .minus, .mul, .div, .equal, .assign
+            .plus, .minus, .mul, .div, .equal, .assign, .less, .more,
+            .lessEqual, .moreEqual
+        ]
+        
+        static let twoLetterOperators: [Kind] = [
+            .lessEqual, .moreEqual
         ]
         
         static let reserved: [Kind] = [
@@ -62,6 +71,15 @@ struct Token: Convertable {
             default:
                 return str == self.rawValue
             }
+        }
+        
+        static func isTwoLetterOperators(str: String) -> Bool {
+            for op in Token.Kind.twoLetterOperators {
+                if op.isConvertable(str) {
+                    return true
+                }
+            }
+            return false
         }
     }
     
