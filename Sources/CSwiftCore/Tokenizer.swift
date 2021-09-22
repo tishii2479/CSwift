@@ -18,32 +18,20 @@ class SwiftTokenizer: Tokenizer {
             for s in format(input: line).split(whereSeparator: \.isWhitespace) {
                 let s = String(s) // TODO: check performance
                 
-                var isTokenized: Bool = false
-                
                 // check reserved tokens
-                for reserved in Token.Kind.reserved {
-                    if reserved.isConvertable(s) {
-                        tokens.append(Token(kind: reserved, str: reserved.rawValue))
-                        isTokenized = true
-                        break
-                    }
-                }
-                if isTokenized { continue }
-                
-                for kind in Token.Kind.allCases {
-                    if Token.Kind.reserved.contains(kind) { continue }
-                    if kind.isConvertable(s) {
-                        tokens.append(Token(kind: kind, str: s))
-                        isTokenized = true
-                        break
-                    }
+                if let token = Token.reservedToken(s) {
+                    tokens.append(token)
+                    continue
                 }
                 
-                if isTokenized { continue }
+                if let token = Token.convertToken(s) {
+                    tokens.append(token)
+                    continue
+                }
                 
                 Logger.error("Failed to tokenize: '\(input)' at '\(s)'")
             }
-            tokens.append(Token(kind: .endl, str: "\n"))
+            tokens.append(Token(kind: .endl))
         }
         return tokens
     }
@@ -57,15 +45,6 @@ class SwiftTokenizer: Tokenizer {
         while i < input.count - 1 {
             let idx = input.index(input.startIndex, offsetBy: i)
             i += 1
-            
-            // check for two letter operators
-            // e.g <=, &&, |=
-            var s: String = String(input[idx]) + String(input[input.index(after: idx)])
-            if Token.Kind.isTwoLetterOperators(str: s) {
-                result.append(s)
-                i += 1
-                continue
-            }
             
             // if adjacent letters is a pair of operator and letter,
             // insert a space.

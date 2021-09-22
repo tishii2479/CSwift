@@ -43,10 +43,6 @@ struct Token: Convertable {
             .lessEqual, .moreEqual
         ]
         
-        static let twoLetterOperators: [Kind] = [
-            .lessEqual, .moreEqual
-        ]
-        
         static let reserved: [Kind] = [
             .if, .var, .let, .true, .false, .print, .input
         ]
@@ -72,15 +68,6 @@ struct Token: Convertable {
                 return str == self.rawValue
             }
         }
-        
-        static func isTwoLetterOperators(str: String) -> Bool {
-            for op in Token.Kind.twoLetterOperators {
-                if op.isConvertable(str) {
-                    return true
-                }
-            }
-            return false
-        }
     }
     
     let kind: Kind
@@ -97,6 +84,24 @@ struct Token: Convertable {
         default:
             return kind.rawValue
         }
+    }
+    
+    static func reservedToken(_ str: String) -> Token? {
+        for kind in Kind.reserved {
+            if kind.isConvertable(str) {
+                return Token(kind: kind)
+            }
+        }
+        return nil
+    }
+    
+    static func convertToken(_ str: String) -> Token? {
+        for kind in Kind.allCases {
+            if kind.isConvertable(str) {
+                return Token(kind: kind, str: str)
+            }
+        }
+        return nil
     }
     
     init(kind: Kind, str: String) {
