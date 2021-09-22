@@ -42,20 +42,12 @@ struct Token: Convertable {
             .if, .var, .let, .true, .false, .print, .input
         ]
         
-        static let noLeftSpace: [Kind] = [
-            .comma, .rBr, .rBrCur
-        ]
-        
-        static let noRightSpace: [Kind] = [
-            .lBr, .lBrCur
-        ]
-        
-        var isNoLeftSpace: Bool {
-            Kind.noLeftSpace.contains(self)
+        var noLeftSpace: Bool {
+            [.comma, .rBr, .rBrCur].contains(self)
         }
         
-        var isNoRightSpace: Bool {
-            Kind.noRightSpace.contains(self)
+        var noRightSpace: Bool {
+            [.lBr, .lBrCur].contains(self)
         }
                 
         func isConvertable(_ str: String) -> Bool {

@@ -5,7 +5,7 @@
 //  Created by Tatsuya Ishii on 2021/09/21.
 //
 
-struct Statement: Convertable {
+class Statement: Convertable {
     private(set) var tokens: [Token] = []
     
     var count: Int {
@@ -15,11 +15,11 @@ struct Statement: Convertable {
     var convertValue: String {
         var result = ""
         for token in tokens {
-            if token.kind.isNoLeftSpace && result.last == " " {
+            if token.kind.noLeftSpace && result.last == " " {
                 result.popLast()
             }
             result += token.convertValue
-            if !token.kind.isNoRightSpace {
+            if !token.kind.noRightSpace {
                 result += " "
             }
         }
@@ -27,19 +27,19 @@ struct Statement: Convertable {
         return result + ";"
     }
     
-    mutating func append(_ kind: Token.Kind) {
+    func append(_ kind: Token.Kind) {
         tokens.append(Token(kind: kind))
     }
     
-    mutating func append(_ token: Token) {
+    func append(_ token: Token) {
         tokens.append(token)
     }
     
-    mutating func removeAll() {
+    func removeAll() {
         tokens.removeAll()
     }
     
-    mutating func removeLast() {
+    func removeLast() {
         tokens.removeLast()
     }
 }
