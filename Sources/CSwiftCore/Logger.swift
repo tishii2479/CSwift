@@ -29,8 +29,14 @@ public class Logger {
         }
     }
     
-    public static func error(_ val: Any...) -> Never {
-        print("[error] ", terminator: "")
+    public static func error(
+        _ val: Any...,
+        f: String = #function,
+        c: String = #file,
+        l: Int = #line,
+        col: Int = #column
+    ) -> Never {
+        print("[error] \(c) \(f), Line: \(l), \(col)")
         for v in val {
             print(v, terminator: " ")
         }

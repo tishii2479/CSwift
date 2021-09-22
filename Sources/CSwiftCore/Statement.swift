@@ -5,7 +5,7 @@
 //  Created by Tatsuya Ishii on 2021/09/21.
 //
 
-class Statement: Convertable {
+struct Statement: Convertable {
     private(set) var tokens: [Token] = []
     
     var count: Int {
@@ -27,19 +27,19 @@ class Statement: Convertable {
         return result + ";"
     }
     
-    func append(_ kind: Token.Kind) {
+    mutating func append(_ kind: Token.Kind) {
         tokens.append(Token(kind: kind))
     }
     
-    func append(_ token: Token) {
+    mutating func append(_ token: Token) {
         tokens.append(token)
     }
     
-    func removeAll() {
+    mutating func removeAll() {
         tokens.removeAll()
     }
     
-    func removeLast() {
+    mutating func removeLast() {
         tokens.removeLast()
     }
 }

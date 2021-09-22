@@ -26,8 +26,10 @@ class CSwiftCoreTest: XCTestCase {
         "var a = 10\nprint(a)\n" : "int a = 10;\ncout << a << endl;\n",
         "input(n)\nprint(n)\n" : "int n;\ncin >> n;\ncout << n << endl;\n",
         "input(n, k)\nprint(n, k)\n" : "int n, k;\ncin >> n >> k;\ncout << n << \" \" << k << endl;\n",
-//        "if true {\n}\n" : "if (true) {\n}\n",
-//        "if true { }\n" : "if (true) {\n}\n",
+        "if true {\n}\n" : "if (true) {\n}\n",
+        "if true { }\n" : "if (true) {\n}\n",
+        "if true { }\nvar a = 10\n" : "if (true) {\n}\nint a = 10;\n",
+        "if true {\nvar a = 10\n}\n" : "if (true) {\nint a = 10;\n}\n",
     ]
     
     func testAll() throws {
