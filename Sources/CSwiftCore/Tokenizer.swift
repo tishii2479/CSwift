@@ -14,9 +14,9 @@ class SwiftTokenizer: Tokenizer {
         var tokens: [Token] = []
     
         for line in input.split(whereSeparator: \.isNewline) {
-            let line = String(line) // TODO: check performance
+            let line = String(line)
             for s in format(input: line).split(whereSeparator: \.isWhitespace) {
-                let s = String(s) // TODO: check performance
+                let s = String(s)
                 
                 // check reserved tokens
                 if let token = Token.reservedToken(s) {
@@ -41,10 +41,8 @@ class SwiftTokenizer: Tokenizer {
         
         guard input.count > 0 else { return "" }
         
-        var i: Int = 0
-        while i < input.count - 1 {
+        for i in 0 ..< input.count - 1 {
             let idx = input.index(input.startIndex, offsetBy: i)
-            i += 1
             
             // if adjacent letters is a pair of operator and letter,
             // insert a space.

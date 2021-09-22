@@ -54,6 +54,14 @@ struct Token: Convertable {
         var noRightSpace: Bool {
             [.lBr, .lBrCur].contains(self)
         }
+        
+        var isOperator: Bool {
+            Token.Kind.operators.contains(self)
+        }
+        
+        var isCustomStr: Bool {
+            [.num, .variable, .cName].contains(self)
+        }
                 
         func isConvertable(_ str: String) -> Bool {
             switch self {
@@ -110,7 +118,10 @@ struct Token: Convertable {
     }
     
     init(kind: Kind) {
-        // TODO: check is ok without raw str
+        if kind.isCustomStr {
+            Logger.debug("\(kind) is not a custom str.", type: .warn)
+        }
+        
         self.kind = kind
         self.str = kind.rawValue
     }

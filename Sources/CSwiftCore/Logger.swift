@@ -9,6 +9,7 @@ public class Logger {
     public enum DebugType {
         case none
         case code
+        case warn
     }
     
     public static func debug(_ val: Any..., type: DebugType = .none) {
@@ -20,6 +21,12 @@ public class Logger {
                 print(v)
             }
             print("------------------- End -------------------")
+        case .warn:
+            print("[warn] ", terminator: "")
+            for v in val {
+                print(v, terminator: " ")
+            }
+            print("")
         case .none:
             print("[debug] ", terminator: "")
             for v in val {
