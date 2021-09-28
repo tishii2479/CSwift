@@ -19,6 +19,7 @@ struct Token: Convertable {
         case lBrCur     = "("
         case rBrCur     = ")"
         case `if`       = "if"
+        case `else`     = "else"
         case `var`      // var
         case `let`      // let
         case variable   // hoge, fuga

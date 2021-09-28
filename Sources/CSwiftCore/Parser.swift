@@ -180,6 +180,15 @@ public class CSwiftParser: Parser {
         statement.append(.rBrCur)
         
         guard parseBlock() else { parseError() }
+        
+        if consume(kind: .else) != nil {
+            if expect(kind: .if) {
+                parseIf()
+            }
+            else {
+                parseBlock()
+            }
+        }
         return true
     }
     
