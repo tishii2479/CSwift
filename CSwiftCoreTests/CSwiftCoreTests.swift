@@ -34,7 +34,8 @@ class CSwiftCoreTest: XCTestCase {
         "if i < n \n{\n}\n" : "if (i < n) {\n}\n",
         "i <= n" : "i <= n;\n",
         "func f () {\n}\n" : "void f () {\n}\n",
-        "if true { } else if false { } else { }" : "if (true) {\n}\nelse if (false) {\n}\nelse {\n}\n",
+        "if i == n { } else if j <= n { } else { }" : "if (i == n) {\n}\nelse if (j <= n) {\n}\nelse {\n}\n",
+//        "if true { if false { } }" : "if (true) {\nif (false) {\n}\n}\n"
     ]
     
     func testAll() throws {
@@ -44,11 +45,12 @@ class CSwiftCoreTest: XCTestCase {
     }
     
     private func assertCSwiftConverter(input: String, expected: String) {
+//        Logger.debug("Testing... \n\(input)")
         guard let output = CSwiftConverter().convert(input: input) else {
             XCTFail("Failed to convert swift code: \(input)")
             return
         }
-        
+//        Logger.debug("Output: \n\(output)")
         XCTAssertEqual(output, expected, "\ninput: \n\(input)")
     }
 

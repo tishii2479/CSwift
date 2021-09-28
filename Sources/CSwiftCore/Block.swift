@@ -15,7 +15,7 @@ class Block: Convertable {
     ///
     /// Statements in the block
     ///
-    private var statements: [Statement] = []
+    private var contents: [Convertable] = []
     
     var convertValue: String {
         var result: String = ""
@@ -26,15 +26,15 @@ class Block: Convertable {
         result.popLast() // remove last semicolon of prevStatement
         result += " {\n"
     
-        for statement in statements {
-            result += statement.convertValue + "\n"
+        for content in contents {
+            result += content.convertValue + "\n"
         }
         
         result += "}"
         return result
     }
     
-    func appendStatement(_ statement: Statement) {
-        statements.append(statement)
+    func appendContent(_ content: Convertable) {
+        contents.append(content)
     }
 }

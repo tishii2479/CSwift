@@ -12,7 +12,6 @@ protocol Parser {
 public class CSwiftParser: Parser {
     private var ptr = 0
     private var result: [String] = []
-    private var blocks: [Block] = []
     private var statement: Statement = Statement()
     private var tokens: [Token] = []
     
@@ -27,19 +26,24 @@ public class CSwiftParser: Parser {
         self.tokens = tokens
         
         while ptr < tokens.count {
-            let token = tokens[ptr]
-            switch token.kind {
-            case .if:
-                guard parseIf() else { parseError() }
-            case .func:
-                guard parseFunc() else { parseError() }
-            default:
-                parseStatement()
-                endOfStatement()
-            }
+            parse()
         }
         
         return result
+    }
+    
+    private func parse() {
+        let token = tokens[ptr]
+
+        switch token.kind {
+        case .if:
+            guard parseIf() else { parseError() }
+        case .func:
+            guard parseFunc() else { parseError() }
+        default:
+            parseStatement()
+            endOfStatement()
+        }
     }
     
     private func parseStatement() {
@@ -47,7 +51,7 @@ public class CSwiftParser: Parser {
             let token = tokens[ptr]
 
             switch token.kind {
-            case .if:
+            case .if, .func:
                 parseError()
             case .endl:
                 guard read(kind: .endl) != nil else { parseError() }
@@ -212,7 +216,7 @@ public class CSwiftParser: Parser {
         while !expect(kind: .rBr) {
             parseStatement()
             
-            block.appendStatement(statement)
+            block.appendContent(statement)
             statement.removeAll()
         }
         
@@ -230,7 +234,7 @@ public class CSwiftParser: Parser {
         guard consume(kind: .lBrCur) != nil else { parseError() }
         // TODO: parse argument
         guard consume(kind: .rBrCur) != nil else { parseError() }
-        guard parseBlock() else { parseError() }        
+        guard parseBlock() else { parseError() }
         return true
     }
     
