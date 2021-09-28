@@ -33,6 +33,7 @@ class CSwiftCoreTest: XCTestCase {
         "if i < n {\n}\n" : "if (i < n) {\n}\n",
         "if i < n \n{\n}\n" : "if (i < n) {\n}\n",
         "i <= n" : "i <= n;\n",
+        "func f () {\n}\n" : "void f () {\n}\n",
     ]
     
     func testAll() throws {

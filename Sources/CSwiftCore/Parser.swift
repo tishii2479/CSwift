@@ -31,6 +31,8 @@ public class CSwiftParser: Parser {
             switch token.kind {
             case .if:
                 guard parseIf() else { parseError() }
+            case .func:
+                guard parseFunc() else { parseError() }
             default:
                 parseStatement()
                 endOfStatement()
@@ -210,6 +212,16 @@ public class CSwiftParser: Parser {
         while read(kind: .endl) != nil { read(kind: .endl) }
         
         result.append(block.convertValue)
+        return true
+    }
+    
+    private func parseFunc() -> Bool {
+        guard consume(kind: .func) != nil else { parseError() }
+        guard consume(kind: .variable) != nil else { parseError() }
+        guard consume(kind: .lBrCur) != nil else { parseError() }
+        // TODO: parse argument
+        guard consume(kind: .rBrCur) != nil else { parseError() }
+        guard parseBlock() else { parseError() }        
         return true
     }
     

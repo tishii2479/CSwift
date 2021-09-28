@@ -8,11 +8,11 @@
 extension Character {
     var isSymbol: Bool {
         let ops: [Character] = ["+", "-", "*", "/", "=", "(", "{", ")", "}", ",", "<", ">"]
-        for op in ops {
-            if self == op {
-                return true
-            }
-        }
-        return false
+        return ops.contains(self)
+    }
+    
+    var isBracket: Bool {
+        let brs: [Character] = ["(", ")", "{", "}", "[", "]"]
+        return brs.contains(self)
     }
 }

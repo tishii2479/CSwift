@@ -37,6 +37,7 @@ struct Token: Convertable {
         case more       = ">"
         case lessEqual  = "<="
         case moreEqual  = ">="
+        case `func`     = "func"
         
         static let operators: [Kind] = [
             .plus, .minus, .mul, .div, .equal, .assign, .less, .more,
@@ -44,7 +45,7 @@ struct Token: Convertable {
         ]
         
         static let reserved: [Kind] = [
-            .if, .var, .let, .true, .false, .print, .input
+            .if, .var, .let, .true, .false, .print, .input, .func
         ]
         
         var noLeftSpace: Bool {
@@ -87,6 +88,8 @@ struct Token: Convertable {
             return "int"
         case .let:
             return "const int"
+        case .func:
+            return "void"
         case .num, .variable, .cName:
             return str
         default:

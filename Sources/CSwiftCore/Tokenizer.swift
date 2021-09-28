@@ -46,7 +46,8 @@ class SwiftTokenizer: Tokenizer {
             
             // if adjacent letters is a pair of operator and letter,
             // insert a space.
-            if input[idx].isSymbol != input[input.index(after: idx)].isSymbol {
+            if input[idx].isSymbol != input[input.index(after: idx)].isSymbol ||
+               input[idx].isBracket && input[idx].isBracket {
                 result.append(input[idx])
                 result.append(" ")
             }
