@@ -11,9 +11,10 @@ protocol Parser {
 
 public class CSwiftParser: Parser {
     private var ptr = 0
-    private var result: [String] = []
+    private var result: [Convertable] = []
     private var statement: Statement = Statement()
     private var tokens: [Token] = []
+    private var currentBlock: Block?
     
     private func setup() {
         result.removeAll()
@@ -29,7 +30,7 @@ public class CSwiftParser: Parser {
             parse()
         }
         
-        return result
+        return result.map { $0.convertValue }
     }
     
     private func parse() {
@@ -67,10 +68,24 @@ public class CSwiftParser: Parser {
     }
     
     private func endOfStatement() {
-        result.append(statement.convertValue)
+        if let block = currentBlock {
+            block.appendContent(statement)
+        }
+        else {
+            result.append(statement)
+        }
         statement.removeAll()
     }
     
+    private func endOfBlock(prev: Block? = nil, current: Block) {
+        if let prev = prev {
+            prev.appendContent(current)
+        }
+        else {
+            result.append(current)
+        }
+    }
+
     @discardableResult
     private func read(kind: Token.Kind) -> Token? { return read(kind: [kind]) }
     private func read(kind: [Token.Kind]) -> Token? {
@@ -213,10 +228,15 @@ public class CSwiftParser: Parser {
         block.prevStatement = statement
         statement.removeAll()
         
+        let previousBlock: Block? = currentBlock
+        currentBlock = block
+        
         while !expect(kind: .rBr) {
-            parseStatement()
+            parse()
             
-            block.appendContent(statement)
+            if !statement.tokens.isEmpty {
+                block.appendContent(statement)
+            }
             statement.removeAll()
         }
         
@@ -224,7 +244,8 @@ public class CSwiftParser: Parser {
         guard read(kind: .rBr) != nil else { parseError() }
         while read(kind: .endl) != nil { read(kind: .endl) }
         
-        result.append(block.convertValue)
+        endOfBlock(prev: previousBlock, current: block)
+        currentBlock = previousBlock
         return true
     }
     
