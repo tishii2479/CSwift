@@ -10,7 +10,7 @@ protocol Parser {
 }
 
 public class CSwiftParser: Parser {
-    private var ptr = 0
+    private var ptr: Int = 0
     private var result: [Convertable] = []
     private var statement: Statement = Statement()
     private var tokens: [Token] = []
@@ -260,11 +260,12 @@ public class CSwiftParser: Parser {
     }
     
     private func parseError(
+        message: String? = nil,
         f: String = #function,
         c: String = #file,
         l: Int = #line,
         col: Int = #column
     ) -> Never {
-        Logger.error("Failed to parse tokens \(tokens), token: \(tokens[ptr]), at: \(ptr)", f: f, c: c, l: l, col: col)
+        Logger.error(message ?? "", "\nFailed to parse tokens \(tokens), token: \(tokens[ptr]), at: \(ptr)", f: f, c: c, l: l, col: col)
     }
 }

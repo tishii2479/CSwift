@@ -90,7 +90,7 @@ struct Token: Convertable {
         case .let:
             return "const int"
         case .func:
-            return "void"
+            return "int"
         case .num, .variable, .cName:
             return str
         default:
