@@ -34,6 +34,7 @@ class CSwiftCoreTest: XCTestCase {
         "if i == n { } else if j <= n { } else { }" : "if (i == n) {\n}\nelse if (j <= n) {\n}\nelse {\n}\n",
         "if true { if false { } }" : "if (true) {\nif (false) {\n}\n}\n",
         "if true { if true { if true { } else { } } }" : "if (true) {\nif (true) {\nif (true) {\n}\nelse {\n}\n}\n}\n",
+        "var a = 10 a = a * 10" : "int a = 10;\na = a * 10;\n",
     ]
     
     func testAll() throws {
@@ -48,7 +49,7 @@ class CSwiftCoreTest: XCTestCase {
             XCTFail("Failed to convert swift code: \(input)")
             return
         }
-//        Logger.debug("Output: \n\(output)")
+        Logger.debug("Output: \n\(output)")
         XCTAssertEqual(output, expected, "\ninput: \n\(input)")
     }
 

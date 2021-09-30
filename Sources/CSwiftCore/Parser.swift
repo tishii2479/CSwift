@@ -36,7 +36,6 @@ public class CSwiftParser: Parser {
     private func parse() {
         let token = tokens[ptr]
         
-        endOfStatement()
         switch token.kind {
         case .if:
             guard parseIf() else { parseError() }
@@ -50,22 +49,10 @@ public class CSwiftParser: Parser {
             guard parsePrint() else { parseError() }
         case .endl:
             guard read(kind: .endl) != nil else { parseError() }
+        case .variable:
+            guard parseReassign() else { parseError() }
         default:
-            parseStatement()
-            endOfStatement()
-        }
-    }
-    
-    private func parseStatement() {
-        while ptr < tokens.count {
-            let token = tokens[ptr]
-
-            switch token.kind {
-            case .if, .func, .var, .let, .input, .print:
-                parseError()
-            default:
-                guard consume(kind: token.kind) != nil else { parseError() }
-            }
+            parseError()
         }
     }
     
@@ -265,6 +252,14 @@ public class CSwiftParser: Parser {
     
     private func parseVariable() -> Bool {
         guard consume(kind: [.var, .let]) != nil else { parseError() }
+        guard consume(kind: .variable) != nil else { parseError() }
+        guard consume(kind: .assign) != nil else { parseError() }
+        guard parseExpr() else { parseError() }
+        
+        return true
+    }
+    
+    private func parseReassign() -> Bool {
         guard consume(kind: .variable) != nil else { parseError() }
         guard consume(kind: .assign) != nil else { parseError() }
         guard parseExpr() else { parseError() }
