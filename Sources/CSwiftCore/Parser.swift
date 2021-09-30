@@ -35,12 +35,21 @@ public class CSwiftParser: Parser {
     
     private func parse() {
         let token = tokens[ptr]
-
+        
+        endOfStatement()
         switch token.kind {
         case .if:
             guard parseIf() else { parseError() }
         case .func:
             guard parseFunc() else { parseError() }
+        case .var, .let:
+            guard parseVariable() else { parseError() }
+        case .input:
+            guard parseInput() else { parseError() }
+        case .print:
+            guard parsePrint() else { parseError() }
+        case .endl:
+            guard read(kind: .endl) != nil else { parseError() }
         default:
             parseStatement()
             endOfStatement()
@@ -52,15 +61,8 @@ public class CSwiftParser: Parser {
             let token = tokens[ptr]
 
             switch token.kind {
-            case .if, .func:
+            case .if, .func, .var, .let, .input, .print:
                 parseError()
-            case .endl:
-                guard read(kind: .endl) != nil else { parseError() }
-                return
-            case .input:
-                guard parseInput() else { parseError() }
-            case .print:
-                guard parsePrint() else { parseError() }
             default:
                 guard consume(kind: token.kind) != nil else { parseError() }
             }
@@ -68,6 +70,7 @@ public class CSwiftParser: Parser {
     }
     
     private func endOfStatement() {
+        if statement.count == 0 { return }
         if let block = currentBlock {
             block.appendContent(statement)
         }
@@ -202,10 +205,10 @@ public class CSwiftParser: Parser {
         
         if consume(kind: .else) != nil {
             if expect(kind: .if) {
-                parseIf()
+                guard parseIf() else { parseError() }
             }
             else {
-                parseBlock()
+                guard parseBlock() else { parseError() }
             }
         }
         return true
@@ -256,16 +259,25 @@ public class CSwiftParser: Parser {
         // TODO: parse argument
         guard consume(kind: .rBrCur) != nil else { parseError() }
         guard parseBlock() else { parseError() }
+        
+        return true
+    }
+    
+    private func parseVariable() -> Bool {
+        guard consume(kind: [.var, .let]) != nil else { parseError() }
+        guard consume(kind: .variable) != nil else { parseError() }
+        guard consume(kind: .assign) != nil else { parseError() }
+        guard parseExpr() else { parseError() }
+        
         return true
     }
     
     private func parseError(
-        message: String? = nil,
         f: String = #function,
         c: String = #file,
         l: Int = #line,
         col: Int = #column
     ) -> Never {
-        Logger.error(message ?? "", "\nFailed to parse tokens \(tokens), token: \(tokens[ptr]), at: \(ptr)", f: f, c: c, l: l, col: col)
+        Logger.error("Failed to parse tokens \(tokens), token: \(tokens[ptr]), at: \(ptr)", f: f, c: c, l: l, col: col)
     }
 }

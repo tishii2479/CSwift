@@ -10,16 +10,12 @@ import CSwiftCore
 
 class CSwiftCoreTest: XCTestCase {
     private let testCases: [String: String] = [
-        "" : "",
-        "42" : "42;\n",
-        "1+1" : "1 + 1;\n",
         "var a = 10" : "int a = 10;\n",
         "var value = 432" : "int value = 432;\n",
-        "1 == 1" : "1 == 1;\n",
         "var a = 10 / 2" : "int a = 10 / 2;\n",
         "var flag = true" : "int flag = true;\n",
         "let a=N*N" : "const int a = N * N;\n",
-        "var num = (1 == 1)" : "int num = (1 == 1);\n",
+        "var num = 1 == 1" : "int num = 1 == 1;\n",
         "var value=10" : "int value = 10;\n",
         "var flag=n==3" : "int flag = n == 3;\n",
         "print(n)" : "cout << n << endl;\n",
@@ -32,9 +28,9 @@ class CSwiftCoreTest: XCTestCase {
         "if true {\nvar a = 10\n}\n" : "if (true) {\nint a = 10;\n}\n",
         "if i < n {\n}\n" : "if (i < n) {\n}\n",
         "if i < n \n{\n}\n" : "if (i < n) {\n}\n",
-        "i <= n" : "i <= n;\n",
         "func f () {\n}\n" : "int f () {\n}\n",
         "func f () { var a = 10\n }" : "int f () {\nint a = 10;\n}\n",
+        "func f () { var a = 10 }" : "int f () {\nint a = 10;\n}\n",
         "if i == n { } else if j <= n { } else { }" : "if (i == n) {\n}\nelse if (j <= n) {\n}\nelse {\n}\n",
         "if true { if false { } }" : "if (true) {\nif (false) {\n}\n}\n",
         "if true { if true { if true { } else { } } }" : "if (true) {\nif (true) {\nif (true) {\n}\nelse {\n}\n}\n}\n",
@@ -47,7 +43,7 @@ class CSwiftCoreTest: XCTestCase {
     }
     
     private func assertCSwiftConverter(input: String, expected: String) {
-//        Logger.debug("Testing... \n\(input)")
+        Logger.debug("Testing... \n\(input)")
         guard let output = CSwiftConverter().convert(input: input) else {
             XCTFail("Failed to convert swift code: \(input)")
             return
@@ -61,7 +57,7 @@ class CSwiftCoreTest: XCTestCase {
         """
         #include <bits/stdc++.h>
         using namespace std;
-        int main() {
+        int main () {
         
         """
         

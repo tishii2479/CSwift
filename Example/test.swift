@@ -1,7 +1,5 @@
 input(a, b)
-if a < b {
-    print(a)
-} 
-if b > a {
-    print(b)
-}
+
+var c = 10 * b + a / b
+
+print(c)

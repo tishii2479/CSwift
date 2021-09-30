@@ -14,12 +14,8 @@ public class CSwiftConverter: Converter {
     
     public func convert(input: String) -> String? {
         let source = CSource()
-        source.appendLine(line: "int main() {")
-        
         // Convert swift code to cpp
-        source.appendLines(lines: convertCode(input: input))
-        
-        source.appendLine(line: "}")
+        source.appendLines(lines: convertCode(input: "func main() {" + input + "}"))
         return source.output()
     }
     
