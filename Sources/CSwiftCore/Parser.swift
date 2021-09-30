@@ -55,18 +55,7 @@ public class CSwiftParser: Parser {
             parseError()
         }
     }
-    
-    private func endOfStatement() {
-        if statement.count == 0 { return }
-        if let block = currentBlock {
-            block.appendContent(statement)
-        }
-        else {
-            result.append(statement)
-        }
-        statement.removeAll()
-    }
-    
+        
     private func endOfBlock(prev: Block? = nil, current: Block) {
         if let prev = prev {
             prev.appendContent(current)
@@ -125,15 +114,7 @@ public class CSwiftParser: Parser {
         
         guard read(kind: .rBrCur) != nil else { parseError() }
         
-        statement.append(Token(kind: .var))
-        for variable in variables {
-            statement.append(variable)
-            statement.append(.comma)
-        }
-
-        statement.removeLast()
-        endOfStatement()
-        
+        // Output `cin >> var1 >> var2;`
         statement.append(Token(kind: .cName, str: "cin"))
         
         for variable in variables {
