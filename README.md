@@ -33,8 +33,9 @@ $ ./a.out
 ### Input Swift Code
 
 ```swift
-input(n, k)
-print(n, k)
+var n = 0
+input(n)
+print(n)
 ```
 
 ### Output C++ Code
@@ -43,8 +44,20 @@ print(n, k)
 #include <bits/stdc++.h>
 using namespace std;
 int main() {
-int n, k;
-cin >> n >> k;
-cout << n << k << endl;
+    int n;
+    cin >> n;
+    cout << n << endl;
 }
 ```
+
+# TODO
+
+Since the development is still in progress, there are many syntax that can't be parsed.
+Below is a list of syntax that needs to add implementation to parse.
+
+- String literal: `"Hello world!"`
+- Multiple variable declration: `var a, b: Int`
+- Float variable: `3.2`
+- Array: `[1, 2, 4, 5]`
+- for: `for i in 0..<10`
+- while: `while i < 10`
