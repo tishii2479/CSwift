@@ -6,10 +6,10 @@
 //
 
 protocol Parser {
-    func parse(tokens: [Token]) -> [String]?
+    func parseTokens(_ tokens: [Token]) -> [String]?
 }
 
-public class CSwiftParser: Parser {
+class CSwiftParser: Parser {
     private var ptr: Int = 0
     private var result: [Convertable] = []
     private var statement: Statement = Statement()
@@ -22,7 +22,7 @@ public class CSwiftParser: Parser {
         ptr = 0
     }
     
-    func parse(tokens: [Token]) -> [String]? {
+    func parseTokens(_ tokens: [Token]) -> [String]? {
         setup()
         self.tokens = tokens
         
@@ -30,7 +30,14 @@ public class CSwiftParser: Parser {
             parse()
         }
         
-        return result.map { $0.convertValue }
+        var code: [String] = []
+        for element in result {
+            let value = element.convertValue
+            for e in element.convertValue.split(whereSeparator: \.isNewline) {
+                code.append(String(e))
+            }
+        }
+        return code
     }
     
     private func parse() {
@@ -53,15 +60,6 @@ public class CSwiftParser: Parser {
             guard parseReassign() else { parseError() }
         default:
             parseError()
-        }
-    }
-        
-    private func endOfBlock(prev: Block? = nil, current: Block) {
-        if let prev = prev {
-            prev.appendContent(current)
-        }
-        else {
-            result.append(current)
         }
     }
 
@@ -215,8 +213,14 @@ public class CSwiftParser: Parser {
         guard read(kind: .rBr) != nil else { parseError() }
         while read(kind: .endl) != nil { read(kind: .endl) }
         
-        endOfBlock(prev: previousBlock, current: block)
+        if let prev = previousBlock {
+            prev.appendContent(block)
+        }
+        else {
+            result.append(block)
+        }
         currentBlock = previousBlock
+        
         return true
     }
     

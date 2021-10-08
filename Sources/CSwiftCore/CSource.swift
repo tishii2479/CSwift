@@ -36,8 +36,6 @@ class CSource {
     }
     
     func output() -> String {
-        let result: String = source.joined(separator: "\n") + "\n"
-        
-        return result
+        return CSwiftFormatter().format(code: source).joined(separator: "\n") + "\n"
     }
 }

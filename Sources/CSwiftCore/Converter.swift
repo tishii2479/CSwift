@@ -20,13 +20,13 @@ public class CSwiftConverter: Converter {
     }
     
     private func convertCode(input: String) -> [String]? {
-        guard let tokens = SwiftTokenizer().tokenize(input: input) else {
+        guard let tokens: [Token] = SwiftTokenizer().tokenize(input: input) else {
             Logger.error("Failed to tokenize input: \(input)")
         }
-        guard let result = CSwiftParser().parse(tokens: tokens) else {
+        guard let result: [String] = CSwiftParser().parseTokens(tokens) else {
             Logger.error("Failed to parse tokens: \(tokens)")
         }
-        
+
         return result
     }
 }
